@@ -15,11 +15,6 @@ This repository contains all of my scripts, assignments, and projects for MBIO 6
 * **RStudio**: The environment used for all coding.
 * **`tidyverse`**: A collection of R packages for data science.
 * **`here`**: An R package used for creating reproducible file paths.
-=======
-* **RStudio**: The integrated development environment (IDE) for all coding.
-* **`tidyverse`**: A collection of R packages (e.g., `ggplot2`, `dplyr`, `tidyr`) for data science.
-* **`here`**: An R package used for creating simple and reproducible file paths.
->>>>>>> 79da20501a14a87525f82ae211dc26953d8531a6
 
 ---
 
