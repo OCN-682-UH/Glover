@@ -11,7 +11,6 @@ This repository contains all of my scripts, assignments, and projects for MBIO 6
 ## Technologies 💻
 
 * **R**: The primary programming language used throughout the course.
-<<<<<<< HEAD
 * **RStudio**: The environment used for all coding.
 * **`tidyverse`**: A collection of R packages for data science.
 * **`here`**: An R package used for creating reproducible file paths.
