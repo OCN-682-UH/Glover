@@ -4,6 +4,9 @@
 library(ggplot2)
 library(palmerpenguins)
 
+#Look at data from package (would usually load in)
+glimpse(penguins)
+
 # Create the violin plot
 # The aes() mapping shows the distribution of bill depth by species.
 # The geom_violin() and geom_jitter() functions are used to create the plot.
