@@ -1,8 +1,9 @@
 #This is Kent's R script for the week 3 assignment.
 
 # Load the necessary libraries
-library(ggplot2)
+library(tidyverse)
 library(palmerpenguins)
+library(here)
 
 #Look at data from package (would usually load in)
 glimpse(penguins)
