@@ -8,7 +8,7 @@ library(here)
 #Look at data from package (would usually load in)
 glimpse(penguins)
 
-# Create the violin plot
+# Create the violin plot, I've never created a violin plot before!
 # The aes() mapping shows the distribution of bill depth by species.
 # The geom_violin() and geom_jitter() functions are used to create the plot.
 # using the 'fill' aesthetic for the violins instead of 'color' to color the entire shape.
