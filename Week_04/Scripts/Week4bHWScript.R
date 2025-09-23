@@ -81,7 +81,7 @@ chem_plot #view plot
 
 # save the plot to the outputs folder.
 ggsave(
-  here("Week_04", "Outputs", "mean_chemical_plot.png"),
+  here("Week_04", "Outputs", "week4b_chemical_plot.png"),
   plot = chem_plot,
   width = 8,
   height = 6,

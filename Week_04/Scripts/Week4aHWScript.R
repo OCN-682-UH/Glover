@@ -38,7 +38,7 @@ hw2plot = ggplot(hw2, aes(x = island, y = log_mass, fill = species)) + #Plot!
 hw2plot
 
 ggsave(
-  here("Week_04", "Outputs", "hw2plot.png"),
+  here("Week_04", "Outputs", "Week4a_hwplot.png"),
   hw2plot,
   width = 7,
   height = 5,
