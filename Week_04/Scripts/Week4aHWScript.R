@@ -1,4 +1,4 @@
-# This is my week 4 homework 1 script
+# This is my week 4 homework a script
 
 #load packages
 library(palmerpenguins)
