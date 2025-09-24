@@ -16,6 +16,8 @@ hw1 = penguins %>%
 
 view(hw1)
 
+
+
 #2. 
 hw2 = penguins %>% # use penguin dataframe
   drop_na(species, island, sex, body_mass_g) %>% #drop all NAs
@@ -56,3 +58,23 @@ ggplot(hw2, aes(x = species, y = log_mass, color = island)) +
   ) +
   theme_minimal()
 
+
+penguins
+test = filter(.data = penguins, year == 2007)
+test
+
+TempData <- penguins %>% mutate(Temp_k = bill_length_mm + 273.1)
+TempData
+
+TempData_summary<-TempData %>% summarise(meanTemp = mean(bill_length_mm, na.rm = TRUE)
+TempData_summary
+
+TempData_summary<-TempData %>% group_by(Site)%>% summarise(meanTemp = mean(bill_length_mm, na.rm = TRUE)
+TempData_summary                                                           
+
+TempData_summary<-TempData %>% group_by(Site)%>% mutate(meanTemp = mean(bill_length_mm, na.rm = TRUE)                                         
+                                                        TempData_summary     
+                                                        
+TempData_summary<-TempData %>% mutate(meanTemp = mean(Temperature, na.rm = TRUE)                                                        
+                                      TempData_summary
+                                      

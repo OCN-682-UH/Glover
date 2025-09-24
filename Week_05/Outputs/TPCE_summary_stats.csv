@@ -1,0 +1,115 @@
+name,Parameters,mean_measurement,sd_measurement
+Anemone Heaven,CCA.cover,6.1,0
+Anemone Heaven,DIN_DIP,3.938961,0
+Anemone Heaven,E,0.21557674070833335,0.18923511649842747
+Anemone Heaven,Eh,18.319714959208333,24.75315830739265
+Anemone Heaven,N,0.7840256,0
+Anemone Heaven,N.N,0.51,0
+Anemone Heaven,NH4,0.825,0
+Anemone Heaven,P,0.34,0
+Anemone Heaven,Th,309.92245068750003,3.8347333573465776
+Anemone Heaven,Topt,305.82617227916666,3.4777982698073022
+Anemone Heaven,algal.cover,37.15,0
+Anemone Heaven,coral.cover,16.95,0
+Anemone Heaven,light,1674.241,0
+Anemone Heaven,lnc,0.6070175051666666,0.36526672201434734
+Anemone Heaven,p.acuta.cover,6.3,0
+Anemone Heaven,site.block,1,0
+Anemone Heaven,substrate.cover,33.5,0
+Anemone Heaven,temp,27.4,0
+Anemone Heaven,trap.accumulation.rate,2.287115477,0
+Creepy Tree,CCA.cover,15.25,0
+Creepy Tree,DIN_DIP,1.451532,0
+Creepy Tree,E,0.320225461,0.29988517983207663
+Creepy Tree,Eh,2.87906579625,1.2189173111175087
+Creepy Tree,N,0.747416,0
+Creepy Tree,N.N,0.355,0
+Creepy Tree,NH4,0.225,0
+Creepy Tree,P,0.4,0
+Creepy Tree,Th,311.1401161458333,5.345472098780736
+Creepy Tree,Topt,304.874153625,2.915955640866021
+Creepy Tree,algal.cover,14.5,0
+Creepy Tree,coral.cover,21.75,0
+Creepy Tree,light,2677.125,0
+Creepy Tree,lnc,0.61167066775,0.3846601070527869
+Creepy Tree,p.acuta.cover,3,0
+Creepy Tree,site.block,3,0
+Creepy Tree,substrate.cover,45.5,0
+Creepy Tree,temp,27,0
+Creepy Tree,trap.accumulation.rate,2.008103108,0
+Hilton High,CCA.cover,10.25,0
+Hilton High,DIN_DIP,1.858482,0
+Hilton High,E,0.265134348875,0.11895967386115018
+Hilton High,Eh,2.4707147679166668,1.808932076363221
+Hilton High,N,0.7906739,0
+Hilton High,N.N,0.26,0
+Hilton High,NH4,0.36,0
+Hilton High,P,0.335,0
+Hilton High,Th,311.08986304583334,4.551063951436779
+Hilton High,Topt,303.9513951916667,2.1459901875705762
+Hilton High,algal.cover,32.625,0
+Hilton High,coral.cover,35.75,0
+Hilton High,light,1193.23,0
+Hilton High,lnc,0.6459838975,0.3073411948055121
+Hilton High,p.acuta.cover,6.5,0
+Hilton High,site.block,2,0
+Hilton High,substrate.cover,14.875,0
+Hilton High,temp,26.5,0
+Hilton High,trap.accumulation.rate,2.373570014,0
+Manava,CCA.cover,4,0
+Manava,DIN_DIP,6.365323,0
+Manava,E,0.17494886145833333,0.08948782676008261
+Manava,Eh,8.337114707333333,10.636585185121517
+Manava,N,0.8935947,0
+Manava,N.N,0.76,0
+Manava,NH4,1.49,0
+Manava,P,0.355,0
+Manava,Th,311.0896212541667,2.0799074198876317
+Manava,Topt,305.3134558125,3.1421685571534455
+Manava,algal.cover,22.375,0
+Manava,coral.cover,20.05,0
+Manava,light,1533.245,0
+Manava,lnc,0.476513747875,0.2451536444327765
+Manava,p.acuta.cover,3.5,0
+Manava,site.block,1,0
+Manava,substrate.cover,50.075,0
+Manava,temp,27.7,0
+Manava,trap.accumulation.rate,3.438532719,0
+Public Beach,CCA.cover,7.5,0
+Public Beach,DIN_DIP,1.011607,0
+Public Beach,E,0.40144932379166665,0.3753587210722086
+Public Beach,Eh,2.5975180690833333,1.0651919504440641
+Public Beach,N,0.6703865,0
+Public Beach,N.N,0.255,0
+Public Beach,NH4,0.085,0
+Public Beach,P,0.335,0
+Public Beach,Th,309.2958745125,7.292847099616055
+Public Beach,Topt,304.1554350458333,2.905670233319524
+Public Beach,algal.cover,20,0
+Public Beach,coral.cover,33.75,0
+Public Beach,light,2647.89,0
+Public Beach,lnc,0.84424691650000006,0.5707678706027637
+Public Beach,p.acuta.cover,16,0
+Public Beach,site.block,3,0
+Public Beach,substrate.cover,22.75,0
+Public Beach,temp,26.7,0
+Public Beach,trap.accumulation.rate,1.579760175,0
+Sargassum Heaven,CCA.cover,1.25,0
+Sargassum Heaven,DIN_DIP,3.184535,0
+Sargassum Heaven,E,0.195301608,0.0699825494509871
+Sargassum Heaven,Eh,5.866338615666667,15.711055130778961
+Sargassum Heaven,N,0.858445,0
+Sargassum Heaven,N.N,0.515,0
+Sargassum Heaven,NH4,0.515,0
+Sargassum Heaven,P,0.325,0
+Sargassum Heaven,Th,312.3333641708333,3.0972159897408056
+Sargassum Heaven,Topt,304.42560426666665,2.059794510404661
+Sargassum Heaven,algal.cover,14.5,0
+Sargassum Heaven,coral.cover,28,0
+Sargassum Heaven,light,2114.013,0
+Sargassum Heaven,lnc,0.5131237284583333,0.25327483090601094
+Sargassum Heaven,p.acuta.cover,0.25,0
+Sargassum Heaven,site.block,2,0
+Sargassum Heaven,substrate.cover,56,0
+Sargassum Heaven,temp,26.9,0
+Sargassum Heaven,trap.accumulation.rate,2.149574168,0
