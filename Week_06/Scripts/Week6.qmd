@@ -1,0 +1,42 @@
+---
+title: "Week6"
+author: Kent Glover
+date: today
+format:
+  html:
+    toc: true
+warning: false
+---
+
+## Introduction
+### This is my first *Quatro* document!
+
+### Load the needed libraries
+```{r}
+#This a code chunk for R.
+#| message: false
+library(here)
+library(tidyverse)
+library(palmerpenguins)
+
+
+```
+
+### View the Data
+```{r}
+glimpse((penguins))
+```
+
+### Let's make a plot! 
+
+### This plot will look at the relationship between **bill length** and **bill depth**.
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm)) +
+ geom_point(aes(color = species)) +
+ scale_color_manual(
+ values = c("darkorange", "purple", "cyan4")) 
+```
+
+quarto render Week6.qmd --to html
+
