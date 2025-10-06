@@ -127,8 +127,8 @@ ggplot(wide_data, aes(x = NH4, y = coral.cover)) +
 
 <div id="fig-coral-nh4">
 
-<img src="Week6HW_files/figure-commonmark/fig-coral-nh4-1.png"
-style="width:80.0%" data-fig-align="center" />
+<img src="../Outputs/fig-coral-nh4-1.png" style="width:80.0%"
+data-fig-align="center" />
 
 Figure 1: A scatter plot exploring the link between percent coral cover
 and ammonia (NH4) concentration across six sites in Mo’orea. Points are

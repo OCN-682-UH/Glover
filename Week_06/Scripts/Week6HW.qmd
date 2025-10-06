@@ -2,8 +2,15 @@
 title: "Week 6 Homework"
 author: "Kent Glover"
 date: "today"
-format: gfm
+format: 
+  html:
+    toc: true
+    theme: united
+    mainfont: "Georgia"
 prefer-html: true
+knitr: 
+  opts_chunk:
+      fig.path: "../Outputs/"
 ---
 
 ## Introduction
