@@ -9,7 +9,7 @@
 <meta name="author" content="Kent Glover">
 <meta name="dcterms.date" content="2025-10-05">
 
-<title>Week 6 Homework</title>
+<title>Kent’s Week 6 Homework</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -86,10 +86,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#getting-started-packages-and-data" id="toc-getting-started-packages-and-data" class="nav-link" data-scroll-target="#getting-started-packages-and-data">1. Getting Started: Packages and Data</a></li>
+  <li><a href="#packages-and-data" id="toc-packages-and-data" class="nav-link" data-scroll-target="#packages-and-data">1. Packages and Data</a></li>
   <li><a href="#reshaping-the-data" id="toc-reshaping-the-data" class="nav-link" data-scroll-target="#reshaping-the-data">2. Reshaping the Data</a></li>
   <li><a href="#figure-coral-cover-vs.-ammonia" id="toc-figure-coral-cover-vs.-ammonia" class="nav-link" data-scroll-target="#figure-coral-cover-vs.-ammonia">3. Figure: Coral Cover vs.&nbsp;Ammonia</a></li>
-  <li><a href="#table-a-quick-site-summary" id="toc-table-a-quick-site-summary" class="nav-link" data-scroll-target="#table-a-quick-site-summary">4. Table: A Quick Site Summary</a></li>
+  <li><a href="#table-quick-site-summary" id="toc-table-quick-site-summary" class="nav-link" data-scroll-target="#table-quick-site-summary">4. Table: Quick Site Summary</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
@@ -98,7 +98,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Week 6 Homework</h1>
+<h1 class="title">Kent’s Week 6 Homework</h1>
 </div>
 
 
@@ -129,11 +129,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>This report takes a look at the site characteristics from Dr.&nbsp;Silbiger’s dataset on the coral reefs of Mo’orea. The main goal here is to whip up a publication-quality figure and table to complete the Week 6 Homework objectives!</p>
+<p>The main goal here is to whip up a publication-quality figure and table to complete the Week 6 Homework objectives using the Mo’orea data!</p>
 <hr>
 </section>
-<section id="getting-started-packages-and-data" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started-packages-and-data">1. Getting Started: Packages and Data</h2>
+<section id="packages-and-data" class="level2">
+<h2 class="anchored" data-anchor-id="packages-and-data">1. Packages and Data</h2>
 <p>First, load up the R packages needed. <strong><code>tidyverse</code></strong> is for data wrangling and plotting, <strong><code>here</code></strong> helps keep file paths easy, <strong><code>kableExtra</code></strong> helps with tables, and <strong><code>ggrepel</code></strong> will keep plot labels from overlapping.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -239,8 +239,8 @@ Figure&nbsp;1: A scatter plot exploring the link between percent coral cover and
 </div>
 <hr>
 </section>
-<section id="table-a-quick-site-summary" class="level2">
-<h2 class="anchored" data-anchor-id="table-a-quick-site-summary">4. Table: A Quick Site Summary</h2>
+<section id="table-quick-site-summary" class="level2">
+<h2 class="anchored" data-anchor-id="table-quick-site-summary">4. Table: Quick Site Summary</h2>
 <p>Using <code>kableExtra</code>, I can lay out the key stats for each site. To draw attention to the site with the most coral, I highlighted the <strong>Hilton High</strong> row.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wide_data <span class="sc">%&gt;%</span></span>

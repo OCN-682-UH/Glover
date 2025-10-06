@@ -1,4 +1,4 @@
-# Week 6 Homework
+# Kent’s Week 6 Homework
 Kent Glover
 2025-10-05
 
@@ -7,14 +7,12 @@ Kent Glover
 
 ## Introduction
 
-This report takes a look at the site characteristics from Dr. Silbiger’s
-dataset on the coral reefs of Mo’orea. The main goal here is to whip up
-a publication-quality figure and table to complete the Week 6 Homework
-objectives!
+The main goal here is to whip up a publication-quality figure and table
+to complete the Week 6 Homework objectives using the Mo’orea data!
 
 ------------------------------------------------------------------------
 
-## 1. Getting Started: Packages and Data
+## 1. Packages and Data
 
 First, load up the R packages needed. **`tidyverse`** is for data
 wrangling and plotting, **`here`** helps keep file paths easy,
@@ -127,8 +125,8 @@ ggplot(wide_data, aes(x = NH4, y = coral.cover)) +
 
 <div id="fig-coral-nh4">
 
-<img src="../Outputs/fig-coral-nh4-1.png" style="width:80.0%"
-data-fig-align="center" />
+<img src="Week6HW_files/figure-commonmark/fig-coral-nh4-1.png"
+style="width:80.0%" data-fig-align="center" />
 
 Figure 1: A scatter plot exploring the link between percent coral cover
 and ammonia (NH4) concentration across six sites in Mo’orea. Points are
@@ -138,7 +136,7 @@ colored by the site’s average temperature.
 
 ------------------------------------------------------------------------
 
-## 4. Table: A Quick Site Summary
+## 4. Table: Quick Site Summary
 
 Using `kableExtra`, I can lay out the key stats for each site. To draw
 attention to the site with the most coral, I highlighted the **Hilton
