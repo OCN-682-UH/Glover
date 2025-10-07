@@ -1,6 +1,6 @@
 # Kent’s Week 6 Homework
 Kent Glover
-2025-10-05
+2025-10-07
 
 <script src="Week6HW_files/libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="Week6HW_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
@@ -32,7 +32,7 @@ make sure everything looks right.
 
 ``` r
 #Read the data using the here()
-moorea_data <- read_csv(here("Week_05", "Data", "site.characteristics.data.csv"))
+moorea_data <- read_csv(here("Week_06", "Data", "site.characteristics.data.csv"))
 ```
 
     Rows: 78 Columns: 5
