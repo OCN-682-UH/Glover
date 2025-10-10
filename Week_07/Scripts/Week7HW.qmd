@@ -12,7 +12,7 @@ format:
 
 ## Introduction
 
-This document analyzes the Tidy Tuesday dataset on plastic pollution. The goal is to visualize the distribution of plastic waste collected across different countries. We will create a world map to show the total amount of plastic pollution recorded per country and a bar chart to highlight the countries with the highest recorded pollution. This analysis uses R for data wrangling and visualization.
+The goal is to visualize the distribution of plastic waste collected across different countries. We will create a world map to show the total amount of plastic pollution recorded per country and a bar chart to highlight the countries with the highest recorded pollution.
 
 ## Setup
 
