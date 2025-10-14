@@ -4,8 +4,8 @@ Kent Glover
 
 ## Introduction
 
-The goal of this HW is to visualize the distribution of plastic waste
-collected across different countries from the TidyTuesday Plastic
+The goal of this **HW** is to visualize the distribution of plastic
+waste collected across different countries from the TidyTuesday Plastic
 Dataset.
 
 ## Setup
@@ -78,6 +78,7 @@ Now, create the choropleth map.
 
 1.  Obtain world map spatial data using the `ne_countries` function from
     the `rnaturalearth` package.
+
 2.  Perform a left join to merge the aggregated plastic pollution data
     with the world map data based on country names.
 
@@ -174,6 +175,6 @@ countries.](Week7HW_files/figure-commonmark/combined-plot-1.png)
 
 The map reveals that plastic pollution is a global issue, with data
 reported from countries across every continent. The bar chart further
-highlights that a few countries report significantly higher amounts of
+highlights that a few countries report *significantly* higher amounts of
 collected plastic waste. For a more comprehensive analysis, data from
 more years and more locations would be beneficial.
