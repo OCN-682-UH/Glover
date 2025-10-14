@@ -2,8 +2,12 @@
 title: "Week7HW"
 author: "Kent Glover"
 date: last-modified
-format: gfm
-
+format: 
+  html:
+    self-contained: true
+    toc: true
+    code-fold: true
+    code-summary: "Show the code"
 ---
 
 ## Introduction
