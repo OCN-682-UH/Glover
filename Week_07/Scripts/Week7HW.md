@@ -1,6 +1,6 @@
 # Week7HW
 Kent Glover
-2025-10-13
+2025-10-14
 
 ## Introduction
 
@@ -29,11 +29,19 @@ library(patchwork)
 Load the `plastics.csv` dataset. The dataset contains information about
 plastic pollution collected during clean-up events.
 
-Preparation steps are: 1. Read the raw data. 2. Group the data by
-country. 3. Calculate the sum of `grand_total` plastic items for each
-country. 4. Rename the `country` column to `name` to facilitate joining
-with the map data. 5. Correct a country name from “United Kingdom of
-Great Britain and Northern Ireland” to “United Kingdom”.
+Preparation steps are:
+
+1.  Read the raw data.
+
+2.  Group the data by country.
+
+3.  Calculate the sum of `grand_total` plastic items for each country.
+
+4.  Rename the `country` column to `name` to facilitate joining with the
+    map data.
+
+5.  Correct a country name from “United Kingdom of Great Britain and
+    Northern Ireland” to “United Kingdom”.
 
 ``` r
 #Load plastic pollution data
