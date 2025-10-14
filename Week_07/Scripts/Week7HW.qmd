@@ -12,11 +12,11 @@ format:
 
 ## Introduction
 
-The goal is to visualize the distribution of plastic waste collected across different countries. We will create a world map to show the total amount of plastic pollution recorded per country and a bar chart to highlight the countries with the highest recorded pollution.
+The goal of this HW is to visualize the distribution of plastic waste collected across different countries from the TidyTuesday Plastic Dataset.
 
 ## Setup
 
-First, we need to load the necessary R packages for our analysis. We'll use `tidyverse` for data manipulation and plotting, `sf` and `rnaturalearth` for spatial data, `here` for file path management, `ggspatial` for map elements, and `patchwork` to combine our plots.
+First, load the necessary R packages. We'll use `tidyverse` for a lot, `sf` and `rnaturalearth` for spatial data, `here` for file path ease, `ggspatial` for maps, and `patchwork` to combine plots.
 
 ```{r}
 #| label: load-packages
@@ -32,31 +32,31 @@ library(ggspatial)
 library(patchwork)
 ```
 
-## Data Loading and Preparation
+## Load and Prep Data
 
-We'll load the `plastics.csv` dataset. The dataset contains information about plastic pollution collected during clean-up events. We will then process this data to make it suitable for mapping.
+Load the `plastics.csv` dataset. The dataset contains information about plastic pollution collected during clean-up events.
 
-Our preparation steps are:
+Preparation steps are:
 1.  Read the raw data.
 2.  Group the data by country.
 3.  Calculate the sum of `grand_total` plastic items for each country.
 4.  Rename the `country` column to `name` to facilitate joining with the map data.
-5.  Correct a country name from "United Kingdom of Great Britain and Northern Ireland" to "United Kingdom" for consistency.
+5.  Correct a country name from "United Kingdom of Great Britain and Northern Ireland" to "United Kingdom".
 
 ```{r}
 #| label: data-prep
 
-# Load the plastic pollution data
+#Load plastic pollution data
 plastics_raw <- read_csv(here("Week_07", "Data","plastics.csv"))
 
-# Aggregate data to get total plastic per country
+#Get total plastic per country
 plastic_by_country <- plastics_raw %>%
-  filter(year == 2020) %>% # Focusing on the most recent year for consistency
+  filter(year == 2020) %>% #Focusing on the most recent year
   group_by(country) %>%
   summarise(total_plastic = sum(grand_total, na.rm = TRUE)) %>%
   ungroup() %>%
   mutate(name = country) %>% 
-  # Standardize country name for joining with map data
+  #Change country name for joining with map data
   mutate(name = case_when(
     name == "United Kingdom of Great Britain and Northern Ireland" ~ "United Kingdom",
     TRUE ~ name
@@ -65,23 +65,23 @@ plastic_by_country <- plastics_raw %>%
 
 ## Creating the World Map
 
-Now, we will create the choropleth map.
+Now, create the choropleth map.
 
-1.  We obtain world map spatial data using the `ne_countries` function from the `rnaturalearth` package.
-2.  We perform a left join to merge our aggregated plastic pollution data with the world map data based on country names.
+1.  Obtain world map spatial data using the `ne_countries` function from the `rnaturalearth` package.
+2.  Perform a left join to merge the aggregated plastic pollution data with the world map data based on country names.
 
 ```{r}
 #| label: create-map-data
 
-# Get world map data
+#world map data
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
-# Join plastic data with world map data
+##Join plastic data with world map data
 world_plastics <- world %>%
   left_join(plastic_by_country, by = "name")
 ```
 
-With the data merged, we can now plot the map using `ggplot2`. We will use a color scale to represent the amount of plastic pollution.
+With the data merged, I can now plot the map using `ggplot2`. I will use a color scale to represent the amount of plastic pollution.
 
 ```{r}
 #| label: plot-map
@@ -106,7 +106,7 @@ map_plot <- ggplot(data = world_plastics) +
   labs(
     title = "Global Plastic Pollution by Country (2020)",
     subtitle = "Total plastic items collected during clean-up events",
-    caption = "Source: Tidy Tuesday | #BreakFreeFromPlastic"
+    caption = "Source: Tidy Tuesday #BreakFreeFromPlastic"
   ) +
   theme_void() +
   theme(
@@ -123,13 +123,13 @@ map_plot <- ggplot(data = world_plastics) +
 
 ## Top 10 Polluting Countries
 
-To provide another perspective, let's visualize the top 10 countries with the most plastic pollution recorded.
+To provide another perspective, I can visualize the top 10 countries with the most plastic pollution recorded.
 
 ```{r}
 #| label: bar-chart
 #| fig-cap: "Top 10 countries by total plastic items collected."
 
-# Create a bar chart for the top 10 countries
+#bar chart for the top 10 countries
 top_10_plot <- plastic_by_country %>%
   arrange(desc(total_plastic)) %>%
   slice_head(n = 10) %>%
@@ -149,7 +149,7 @@ top_10_plot <- plastic_by_country %>%
 
 ## Combined View
 
-Finally, we can combine our map and the bar chart into a single, comprehensive visualization using the `patchwork` package. This allows for a better understanding of both the geographic distribution and the ranking of countries by plastic pollution.
+Finally, I can combine our map and the bar chart into a single graph using the `patchwork` package.
 
 ```{r}
 #| label: combined-plot
@@ -157,14 +157,14 @@ Finally, we can combine our map and the bar chart into a single, comprehensive v
 #| fig-width: 12
 #| fig-height: 7
 
-# Combine the plots
+# Combine plots
 combined_plot <- map_plot + top_10_plot +
   plot_layout(widths = c(3, 1))
 
-# Display the combined plot
+#Display combined plot
 combined_plot
 ```
 
-## Conclusion
+## Conclusions
 
-The map reveals that plastic pollution is a global issue, with data reported from countries across every continent. The bar chart further highlights that a few countries report significantly higher amounts of collected plastic waste. This visualization serves as a powerful tool to understand the scale and distribution of the plastic pollution problem based on the collected data. For a more comprehensive analysis, data from more years and more locations would be beneficial.
+The map reveals that plastic pollution is a global issue, with data reported from countries across every continent. The bar chart further highlights that a few countries report significantly higher amounts of collected plastic waste. For a more comprehensive analysis, data from more years and more locations would be beneficial.
