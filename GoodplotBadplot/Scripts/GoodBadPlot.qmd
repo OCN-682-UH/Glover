@@ -1,0 +1,155 @@
+---
+title: "Good Plot, Bad Plot: Visualizing Haunted Places in the U.S."
+author: "Kent Glover"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+---
+
+## Introduction
+
+This document fulfills the "Good Plot, Bad Plot" assignment by exploring different ways to visualize data on haunted places across the United States. The dataset comes from the Tidy Tuesday project on October 10th, 2023. We will first create a deliberately misleading, difficult to interpret, and aesthetically displeasing plot. Then, we will analyze why it fails as a data visualization. Finally, we will present a clear, interactive, and informative "good" plot using the same underlying data and explain its strengths.
+
+First, let's load all the necessary R libraries and the dataset.
+
+```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
+# load the libraries
+library(tidyverse)
+library(maps)
+library(here)
+library(readr)
+library(leaflet) #for interactive map plot
+library(leaflet.extras) #for interactive map plot
+library(htmltools) #for interactive map plot
+library(patchwork) # for smashing plots together
+
+# get the data.
+haunted_places<- read_csv(here("GoodplotBadplot", "Data", "haunted_places.csv"))
+```
+
+## The Bad Plots: A Study in Chaos
+
+The goal of the following plots is to be as confusing, ugly, and misleading as possible while still technically displaying the data. They are designed to violate key principles of effective data visualization. I have combined two such plots into a single, chaotic output. Hehe.
+
+```{r bad-plots-creation, echo=TRUE, message=FALSE, warning=FALSE, fig.show='hide'}
+# bad plot numero uno
+us_map <- map_data("state")
+bad_map_plot1 <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
+  geom_polygon(data = us_map, aes(x = long, y = lat, group = group), fill = "black", color = "yellow") +
+  geom_point(aes(color = state), size = 3, alpha = 0.5) +
+  scale_y_reverse() + #flip the map just for funsies
+  theme_void() +
+  labs(
+    title = "EVERY GHOST IN AMERICA (MAP VIEW)",
+    subtitle = "lol"
+  ) +
+  theme(
+    plot.background = element_rect(fill = "purple"),
+    plot.title = element_text(color = "orange", hjust = 0.5, family = "serif", size = 20),
+    plot.subtitle = element_text(color = "orange", hjust = 0.5, family = "serif"),
+    legend.position = "none" #hide the legend, it's useless anyway
+  )
+
+#now for the second monstrosity
+bad_map_plot2 <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
+  geom_polygon(data = us_map, aes(x = long, y = lat, group = group), fill = "black", color = "yellow") +
+  # map shape to city, which is a terrible idea
+  geom_point(aes(color = state, shape = city), size = 3, alpha = 0.5) +
+  # slap some text on there, who cares if you can read it
+  geom_text(aes(label = location), color = "white", size = 1.5, check_overlap = FALSE, family = "serif") +
+  scale_y_reverse() + # flip it again
+  facet_wrap(~ state) + # facet by state for max chaos
+  coord_polar() + # polar coordinates on a map? sure.
+  labs(
+    title = "EVERY GHOST IN AMERICA (RADIAL VIEW)",
+    subtitle = "lol."
+  ) +
+  theme(
+    plot.background = element_rect(fill = "pink"),
+    plot.title = element_text(color = "orange", hjust = 0.5, family = "serif", size = 20),
+    plot.subtitle = element_text(color = "orange", hjust = 0.5, family = "serif"),
+    legend.position = "none", # legend is way too long, bye
+    strip.text = element_text(color = "yellow", face = "bold"),
+    strip.background = element_rect(fill = "black"),
+    axis.text = element_blank(), # hide the axis text
+    axis.ticks = element_blank() # no ticks either
+  )
+```
+
+```{r combined-bad-plots, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="the combined monstrosity.", fig.width=13, fig.height=6}
+# show the abominations
+bad_map_plot1 + bad_map_plot2
+```
+
+### Analysis of Why These Plots Are Bad
+
+These plots fail because they violate numerous principles of good data visualization:
+
+* **Distorted Perception:** The most glaring error is `scale_y_reverse()`, which flips the map of the United States upside down. In the second plot, `coord_polar()` completely destroys any meaningful spatial relationship between the data points.
+* **Poor Color Choices:** The color schemes (purple/orange and pink/yellow) are garish and have extremely low contrast, making the plots physically difficult and unpleasant to look at. 
+* **Overplotting and "Chart Junk":** Both plots suffer from extreme overplotting, obscuring any patterns. The second plot exacerbates this by adding overlapping text labels for every single point creating an illegible mess.
+* **Misleading or Hidden Information:** The legend is explicitly hidden (`legend.position = "none"`), removing the viewer's ability to decode the `color = state` aesthetic. 
+* **Lack of Clarity and Purpose:** The titles are unprofessional and uninformative. The faceting by state in the second plot, combined with polar coordinates, serves no analytical purpose and only adds to the visual chaos.
+
+## The Good Plot: An Interactive Exploration
+
+In contrast, a good plot should be clear, informative, and tailored to the data it represents. For a dataset with thousands of geographic points, an interactive map is my first choice. It allows the user to explore the data at different zoom levels, preventing overplotting while still providing access to fine-grained detail.
+
+```{r good-plot, echo=TRUE, message=FALSE, warning=FALSE}
+# first, filter for the main US states and make the popup text
+haunted_interactive <- haunted_places %>%
+  filter(longitude > -130 & longitude < -65 & latitude > 20 & latitude < 50) %>%
+  #make a nice html popup string
+  mutate(popup_info = paste0("<b>", location, "</b><br/>", 
+                             "<i>", city, ", ", state_abbrev, "</i><br/><br/>",
+                             description))
+
+# make a title
+map_title <- htmltools::tags$div(
+  htmltools::tags$h3("Interactive Map of U.S. Haunted Places", style = "font-size: 20px; font-weight: bold; margin-bottom: 5px;"),
+  htmltools::tags$p("Data Source: Tidy Tuesday (October 10th, 2023)", style = "font-size: 12px; font-style: italic;")
+)
+
+# now, the actual map
+interactive_map <- leaflet(haunted_interactive) %>%
+  # a nice clean base map
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  #start in the middle of the US
+  setView(lng = -98.5, lat = 39.8, zoom = 4) %>%
+  # cluster the points so it's not a mess
+  addMarkers(
+    lng = ~longitude, lat = ~latitude,
+    popup = ~popup_info,
+    clusterOptions = markerClusterOptions(),
+    group = "Individual Hauntings" # put it in a group
+  ) %>%
+  # add a heatmap layer too
+  addHeatmap(
+    lng = ~longitude, lat = ~latitude,
+    intensity = 1,
+    blur = 20, max = 0.05, radius = 15,
+    group = "Density Heatmap" # another group
+  ) %>%
+  #a little control box to switch between layers
+  addLayersControl(
+    overlayGroups = c("Density Heatmap", "Individual Hauntings"),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  # add the title box to the map
+  addControl(map_title, position = "topright")
+
+# show the map. it'll be interactive in the final html.
+interactive_map
+```
+
+### Analysis of Why This Plot Is Good
+
+This interactive map is a successful visualization for several reasons:
+
+* **Clarity and Familiarity:** It uses a standard map projection with a clean and light-colored base layer. This allows the data to be the main focus.
+* **Solves Overplotting:** The plot provides two elegant solutions to overplotting. The default view uses `markerClusterOptions()` to group nearby points into clusters. The alternative "Density Heatmap" layer shows the overall distribution without plotting individual points.
+* **User-Controlled Detail:** The viewer can pan, zoom, and switch between a high-level density view and a detailed individual-point view using the layers control.
+* **Rich Information on Demand:** Instead of cluttering the map with text, detailed information is available in well-formatted popups that appear on click. This keeps the main view clean while making deep dives into the data easy and intuitive.
+* **Professional and Informative Presentation:** The plot includes a clear title and credits the data source which are best practices for transparency and context. The overall aesthetic is clean and focused on making the data accessible and understandable.
+

@@ -36,7 +36,7 @@ pie3D(
 
 # A masterpiece of ggplot2 crime
 us_map <- map_data("state")
-bad_map_plot <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
+bad_map_plot1 <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
   geom_polygon(data = us_map, aes(x = long, y = lat, group = group), fill = "black", color = "yellow") +
   geom_point(aes(color = state), size = 3, alpha = 0.5) +
   scale_y_reverse() + # Horrifyingly flip the map upside down
@@ -51,12 +51,12 @@ bad_map_plot <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
     plot.subtitle = element_text(color = "orange", hjust = 0.5, family = "serif"),
     legend.position = "none" # Hide the legend with 50+ colors
   )
-print(bad_map_plot)
+print(bad_map_plot1)
 
 
 
 
-bad_map_plot <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
+bad_map_plot2 <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
   geom_polygon(data = us_map, aes(x = long, y = lat, group = group), fill = "black", color = "yellow") +
   # Add points with an impossible aesthetic mapping (shape = city)
   geom_point(aes(color = state, shape = city), size = 3, alpha = 0.5) +
@@ -79,7 +79,7 @@ bad_map_plot <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
     axis.text = element_blank(), # Hide useless polar axes text
     axis.ticks = element_blank()
   )
-print(bad_map_plot)
+print(bad_map_plot2)
 
 
 
