@@ -146,7 +146,7 @@ dbl (1): Latitude
 </section>
 <section id="clean-and-prepare-data" class="level2">
 <h2 class="anchored" data-anchor-id="clean-and-prepare-data">Clean and Prepare Data</h2>
-<p>Okay, this is the actual work. Gotta wrangle this data into submission. 1. <code>janitor::clean_names()</code> on everything. obv. 2. <code>left_join</code> to stick the latitudes on. 3. Fix the inevitable typos in the character data. 4. Reorder <code>tide_height</code> because ‘High, Low, Mid’ isnt it. 5. Reorder <code>site</code> by latitude, as requested. <code>fct_reorder</code> should do this.</p>
+<p>Okay, this is the actual work. Gotta wrangle this data into submission. 1. <code>janitor::clean_names()</code> on everything. obv. 2. <code>left_join</code> to stick the latitudes on. 3. Fix the typos in the character data. 4. Reorder <code>tide_height</code> because ‘High, Low, Mid’ isnt it. 5. Reorder <code>site</code> by latitude, as requested. <code>fct_reorder</code> should do this.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean 'em up</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>intertidal_data_clean <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(intertidal_data)</span>
@@ -163,13 +163,13 @@ dbl (1): Latitude
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">barnacle_cover_percent =</span> small_barnacles <span class="sc">+</span> large_barnacles,</span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Fix tide height strings. </span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This is a much better way. We'll just *extract* the words we want, </span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This is a much better way, just extract the words we want, </span></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ignoring all the other junk like dots and spaces.</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We make everything uppercase first to match "LOW", "MID", or "HIGH"</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># make everything uppercase first to match "LOW", "MID", or "HIGH"</span></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># then just capitalize the first letter.</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">tide_height =</span> <span class="fu">str_to_title</span>(<span class="fu">str_extract</span>(<span class="fu">toupper</span>(quadrat), <span class="st">"LOW|MID|HIGH"</span>)),</span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. `fct_reorder` to sort sites by latitude. Hope this works.</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. `fct_reorder` to sort sites by latitude. plz work</span></span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The default is ascending (South to North), which is perfect.</span></span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">site =</span> <span class="fu">fct_reorder</span>(site, latitude)</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
@@ -177,16 +177,15 @@ dbl (1): Latitude
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># "Low", "Mid", or "High" (which are now NA)</span></span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tide_height)) <span class="sc">|&gt;</span> </span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5. And *finally* we make it a factor and set the levels</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5. And we make it a factor and set the levels</span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>     <span class="at">tide_height =</span> <span class="fu">fct_relevel</span>(tide_height, <span class="st">"Low"</span>, <span class="st">"Mid"</span>, <span class="st">"High"</span>)</span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's check our work!</span></span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncomment this to check levels if it breaks</span></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="co"># levels(cleaned_data$tide_height)</span></span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co"># levels(cleaned_data$site)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="co"># check</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co"># levels(cleaned_data$tide_height)</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="co"># levels(cleaned_data$site)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="visualize-data" class="level2">
@@ -200,7 +199,7 @@ dbl (1): Latitude
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> tide_height) <span class="sc">+</span> <span class="co"># Split by tide height</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Barnacle Cover by Site and Tide Height"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Sites are *supposed* to be ordered South to North"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Sites ordered South to North"</span>,</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Site (Ordered by Latitude)"</span>,</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Barnacle Cover (%)"</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>

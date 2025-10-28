@@ -39,7 +39,7 @@ latitude_data <- read_csv(here("Week_09", "data", "intertidaldata_latitude.csv")
 Okay, this is the actual work. Gotta wrangle this data into submission.
 1.  `janitor::clean_names()` on everything. obv.
 2.  `left_join` to stick the latitudes on.
-3.  Fix the inevitable typos in the character data.
+3.  Fix the typos in the character data.
 4.  Reorder `tide_height` because 'High, Low, Mid' isnt it.
 5.  Reorder `site` by latitude, as requested. `fct_reorder` should do this.
 
@@ -61,13 +61,13 @@ cleaned_data <- joined_data |>
     barnacle_cover_percent = small_barnacles + large_barnacles,
     
     # 2. Fix tide height strings. 
-    # This is a much better way. We'll just *extract* the words we want, 
+    # This is a much better way, just extract the words we want, 
     # ignoring all the other junk like dots and spaces.
-    # We make everything uppercase first to match "LOW", "MID", or "HIGH"
+    # make everything uppercase first to match "LOW", "MID", or "HIGH"
     # then just capitalize the first letter.
     tide_height = str_to_title(str_extract(toupper(quadrat), "LOW|MID|HIGH")),
     
-    # 3. `fct_reorder` to sort sites by latitude. Hope this works.
+    # 3. `fct_reorder` to sort sites by latitude. plz work
     # The default is ascending (South to North), which is perfect.
     site = fct_reorder(site, latitude)
   ) |> 
@@ -75,14 +75,13 @@ cleaned_data <- joined_data |>
   # "Low", "Mid", or "High" (which are now NA)
   filter(!is.na(tide_height)) |> 
   
-  # 5. And *finally* we make it a factor and set the levels
+  # 5. And we make it a factor and set the levels
   mutate(
      tide_height = fct_relevel(tide_height, "Low", "Mid", "High")
   )
 
 
-# Let's check our work!
-# Uncomment this to check levels if it breaks
+# check
 # levels(cleaned_data$tide_height)
 # levels(cleaned_data$site)
 ```
@@ -102,7 +101,7 @@ intertidal_plot <- ggplot(cleaned_data, aes(x = site, y = barnacle_cover_percent
   facet_wrap(~ tide_height) + # Split by tide height
   labs(
     title = "Barnacle Cover by Site and Tide Height",
-    subtitle = "Sites are *supposed* to be ordered South to North",
+    subtitle = "Sites ordered South to North",
     x = "Site (Ordered by Latitude)",
     y = "Barnacle Cover (%)"
   ) +
