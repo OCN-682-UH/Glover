@@ -11,6 +11,7 @@ Let's setup. Loading the usual suspects.
 - `tidyverse`: Because we're not monsters writing base R.
 - `janitor`: To fix whatever column names we were given.
 - `here`: So R doesn't yell at me about file paths.
+- `viridis`: For better colors.
 
 ```{r}
 #| label: setup
@@ -18,6 +19,7 @@ Let's setup. Loading the usual suspects.
 library(tidyverse)
 library(janitor)
 library(here)
+library(viridis) # For the better color palette
 ```
 
 ## Load Data
@@ -97,8 +99,9 @@ Just throwing this into a boxplot. `facet_wrap` by tide height seems like the ob
 
 # Make the plot.
 intertidal_plot <- ggplot(cleaned_data, aes(x = site, y = barnacle_cover_percent)) +
-  geom_boxplot(aes(fill = site), show.legend = FALSE) +
+  geom_boxplot(aes(fill = site), show.legend = FALSE) + # THIS is where show.legend goes
   facet_wrap(~ tide_height) + # Split by tide height
+  scale_fill_viridis_d() +
   labs(
     title = "Barnacle Cover by Site and Tide Height",
     subtitle = "Sites ordered South to North",
@@ -108,7 +111,7 @@ intertidal_plot <- ggplot(cleaned_data, aes(x = site, y = barnacle_cover_percent
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Angle x-axis text so it's not a total mess
 
-# Show me the plot.
+# Show the plot.
 intertidal_plot
 ```
 
@@ -118,13 +121,12 @@ Annnndddd save it. Right into the Outputs folder.
 
 ```{r}
 
-
 # Save it and be done.
 ggsave(
   filename = here("Week_09", "Outputs", "barnacle_cover_by_site_latitude.png"),
   plot = intertidal_plot,
   width = 8,
   height = 6,
-  dpi = 300
-)
+  dpi = 300)
+
 ```
