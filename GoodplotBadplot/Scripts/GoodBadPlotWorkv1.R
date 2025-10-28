@@ -22,17 +22,6 @@ state_counts <- haunted_places %>%
   # Filter to top 15 to make the pie chart "readable"
   slice_head(n = 15)
 
-# For a truly bad plot, we use the ultimate evil: a 3D pie chart in base R
-pie3D(
-  state_counts$n,
-  labels = paste(state_counts$state, "\n(", state_counts$n, " hauntings)"),
-  explode = 0.1,
-  main = "!!! GHOST-O-RAMA: TOP HAUNTED STATES !!!",
-  col = rainbow(nrow(state_counts)),
-  labelcex = 0.8,
-  font = 2,
-  family = "serif" # Using a generic family for better compatibility
-)
 
 # A masterpiece of ggplot2 crime
 us_map <- map_data("state")
@@ -81,51 +70,6 @@ bad_map_plot2 <- ggplot(haunted_places, aes(x = longitude, y = latitude)) +
   )
 print(bad_map_plot2)
 
-
-
-# Using the same `haunted_places` dataframe and `us_map` from before.
-# We will focus on the contiguous US for a cleaner map.
-haunted_contiguous <- haunted_places %>%
-  filter(longitude > -130 & longitude < -65 & latitude > 20 & latitude < 50)
-
-# We will focus on the contiguous US for a cleaner map.
-haunted_contiguous <- haunted_places %>%
-  filter(longitude > -130 & longitude < -65 & latitude > 20 & latitude < 50)
-
-# Define a bounding box for the contiguous US
-us_bounds <- c(left = -125, bottom = 24, right = -67, top = 50)
-register_stadiamaps(stadia_api_key)
-
-# Get a clean, black-and-white base map
-# This may take a moment to download the map tiles.
-us_map_tiles <- get_stadiamap(bbox = us_bounds, zoom = 5, maptype = "stamen_toner_lite")
-
-# Create the publication-quality plot
-publication_plot <- ggmap(us_map_tiles) +
-  # Use geom_density_2d to draw contour lines instead of filled polygons.
-  # This shows hotspots without completely obscuring the map.
-  geom_density_2d(
-    data = haunted_contiguous,
-    aes(x = longitude, y = latitude, color = after_stat(level)),
-    linewidth = 0.6
-  ) +
-  # Use the same excellent, colorblind-friendly palette for the lines
-  scale_color_viridis_c(option = "inferno") +
-  labs(
-    title = "Contour Density of Reported Haunted Locations in the U.S.",
-    subtitle = "Lines connect areas of equal density, highlighting hotspots in the Northeast.",
-    caption = "Data Source: Tidy Tuesday (2023, Week 44) | Stadia Maps",
-    color = "Density\nLevel" # Update the legend title for color
-  ) +
-  # Refine the theme for a clean, final look
-  theme(
-    legend.position = "right",
-    plot.title = element_text(face = "bold", hjust = 0.5, size = 16),
-    plot.subtitle = element_text(hjust = 0.5, size = 12),
-    plot.caption = element_text(face = "italic")
-  )
-
-print(publication_plot)
 
 # Filter for the contiguous US and create a popup content column
 haunted_interactive <- haunted_places %>%
