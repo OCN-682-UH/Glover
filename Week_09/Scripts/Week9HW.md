@@ -1,20 +1,14 @@
----
-title: "Week 9 HW"
-author: "Kent Glover"
-format: html
----
+# Week 9 HW
+Kent Glover
 
 ## Setup
 
-Let's setup. Loading the usual suspects.
-- `tidyverse`: Because we're not monsters writing base R.
-- `janitor`: To fix whatever column names we were given.
-- `here`: So R doesn't yell at me about file paths.
-- `viridis`: For better colors.
+Let’s setup. Loading the usual suspects. - `tidyverse`: Because we’re
+not monsters writing base R. - `janitor`: To fix whatever column names
+we were given. - `here`: So R doesn’t yell at me about file paths. -
+`viridis`: For better colors.
 
-```{r}
-#| label: setup
-#| message: false
+``` r
 library(tidyverse)
 library(janitor)
 library(here)
@@ -23,30 +17,45 @@ library(viridis) # For the better color palette
 
 ## Load Data
 
-Reading in the data. `here()` just makes life easier. 
+Reading in the data. `here()` just makes life easier.
 
-```{r}
-#| label: load-data
-
+``` r
 # Main
 intertidal_data <- read_csv(here("Week_09", "data", "intertidaldata.csv"))
+```
 
+    Rows: 450 Columns: 13
+    ── Column specification ────────────────────────────────────────────────────────
+    Delimiter: ","
+    chr  (2): Site, Quadrat
+    dbl (11): Transect, Bare Rock, Algae, Mussels, Small Barnacles, Large Barnac...
+
+    ℹ Use `spec()` to retrieve the full column specification for this data.
+    ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
 # Latitudes ok but why is this a separate file?
 latitude_data <- read_csv(here("Week_09", "data", "intertidaldata_latitude.csv"))
 ```
 
+    Rows: 15 Columns: 2
+    ── Column specification ────────────────────────────────────────────────────────
+    Delimiter: ","
+    chr (1): Site
+    dbl (1): Latitude
+
+    ℹ Use `spec()` to retrieve the full column specification for this data.
+    ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
 ## Clean and Prepare Data
 
-Okay, this is the actual work. Gotta wrangle this data into submission.
-1.  `janitor::clean_names()` on everything. obv.
-2.  `left_join` to stick the latitudes on.
-3.  Fix the typos in the character data.
-4.  Reorder `tide_height` because 'High, Low, Mid' isnt it.
-5.  Reorder `site` by latitude, as requested. `fct_reorder` should do this.
+Okay, this is the actual work. Gotta wrangle this data into
+submission. 1. `janitor::clean_names()` on everything. obv. 2.
+`left_join` to stick the latitudes on. 3. Fix the typos in the character
+data. 4. Reorder `tide_height` because ‘High, Low, Mid’ isnt it. 5.
+Reorder `site` by latitude, as requested. `fct_reorder` should do this.
 
-```{r}
-#| label: clean-data
-
+``` r
 # Clean 'em up
 intertidal_data_clean <- clean_names(intertidal_data)
 latitude_data_clean <- clean_names(latitude_data)
@@ -89,13 +98,13 @@ cleaned_data <- joined_data %>%
 
 ## Visualize Data
 
-Finally, the plot. With the factors *hopefully* sorted correctly, the x-axis should actually make sense (South to North).
+Finally, the plot. With the factors *hopefully* sorted correctly, the
+x-axis should actually make sense (South to North).
 
-Just throwing this into a boxplot. `facet_wrap` by tide height seems like the obvious move.
+Just throwing this into a boxplot. `facet_wrap` by tide height seems
+like the obvious move.
 
-```{r}
-#| label: plot-data
-
+``` r
 # Make the plot.
 intertidal_plot <- ggplot(cleaned_data, aes(x = site, y = barnacle_cover_percent)) +
   geom_boxplot(aes(fill = site), show.legend = FALSE) + # THIS is where show.legend goes
@@ -114,12 +123,13 @@ intertidal_plot <- ggplot(cleaned_data, aes(x = site, y = barnacle_cover_percent
 intertidal_plot
 ```
 
+![](Week9HW_files/figure-commonmark/plot-data-1.png)
+
 ## Save Plot
 
-Annnndddd save it. Right into the Outputs folder. 
+Annnndddd save it. Right into the Outputs folder.
 
-```{r}
-
+``` r
 # Save it and be done.
 ggsave(
   filename = here("Week_09", "Outputs", "barnacle_cover_by_site_latitude.png"),
@@ -127,5 +137,4 @@ ggsave(
   width = 8,
   height = 6,
   dpi = 300)
-
 ```
