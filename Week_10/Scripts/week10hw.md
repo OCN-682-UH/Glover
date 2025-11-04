@@ -1,26 +1,25 @@
----
-title: "Week 10 Homework - Functions"
-author: "Kent Glover"
-format: 
-  html:
-    self-contained: true
-    toc: true
-    code-fold: true
-editor: visual
----
+# Week 10 Homework - Functions
+Kent Glover
 
 ## 1. Introduction
 
-Alright, here's the homework. This document has the two custom R functions as requested, both for chewing on the `run41_feed_long.csv` data, which itself was pried from my lab's horrible Excel sheet that makes me want to tear my eyeballs out with a spork.
+Alright, here’s the homework. This document has the two custom R
+functions as requested, both for chewing on the `run41_feed_long.csv`
+data, which itself was pried from my lab’s horrible Excel sheet that
+makes me want to tear my eyeballs out with a spork.
 
-1.  `plot_feeding_regimen()`: The plotting function. Makes lines go up and down and right.
-2.  `summarize_run_parameters()`: The non-plotting one. Spits out a table of stats (mean, min, max).
+1.  `plot_feeding_regimen()`: The plotting function. Makes lines go up
+    and down and right.
+2.  `summarize_run_parameters()`: The non-plotting one. Spits out a
+    table of stats (mean, min, max).
 
 ## 2. Setup and Data Loading
 
-Dumping all the libraries we need. `tidyverse` for the `dplyr`/`ggplot2` magic, `knitr` for the pretty tables, and the rest to wrangle paths, strings, and data structures.
+Dumping all the libraries we need. `tidyverse` for the `dplyr`/`ggplot2`
+magic, `knitr` for the pretty tables, and the rest to wrangle paths,
+strings, and data structures.
 
-```{r setup, message=FALSE, warning=FALSE}
+``` r
 # Load required libraries
 library(tidyverse)
 library(readr)
@@ -33,9 +32,12 @@ library(scales)
 
 ### Helper Function for Parsing Feed
 
-The data is, of course, a complete mess because it came from *that* Excel sheet. This helper function exists purely to deal with the nonsense strings in the `value` column, like "150k" (which means 150,000) and "10+5" (which means 15).
+The data is, of course, a complete mess because it came from *that*
+Excel sheet. This helper function exists purely to deal with the
+nonsense strings in the `value` column, like “150k” (which means
+150,000) and “10+5” (which means 15).
 
-```{r helper-function}
+``` r
 #' Function to fix the god-awful 'value' column.
 #' Tries to guess if '150k' means 150,000 or if '10+5' means 15.
 #' Also strips "cells/mL" and other garbage.
@@ -97,7 +99,7 @@ parse_feed_value_vec <- function(col) {
 
 Now to actually load this thing and run our parser over it.
 
-```{r load-data}
+``` r
 # Path to the data. Please be here.
 file_path <- here("Week_10", "Data", "run41_feed_long.csv")
 
@@ -118,11 +120,19 @@ hatchery_data <- raw_data %>%
 glimpse(hatchery_data)
 ```
 
+    Rows: 1,067
+    Columns: 4
+    $ culture_age_days <dbl> 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…
+    $ date             <date> 2025-08-03, 2025-08-04, 2025-08-05, 2025-08-07, 2025…
+    $ feed_type        <chr> "feed_1", "feed_1", "feed_1", "feed_1", "feed_1", "fe…
+    $ value            <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+
 ### Data Processing: Sum Total Artemia Feed
 
-I have to sum up four different columns (`feed_32`, `feed_35`, `feed_36`, `feed_37`) and pretend it was one thing all along.
+I have to sum up four different columns (`feed_32`, `feed_35`,
+`feed_36`, `feed_37`) and pretend it was one thing all along.
 
-```{r process-data}
+``` r
 # These are all the 'Artemia' columns to sum.
 artemia_types <- c("feed_32", "feed_35", "feed_36", "feed_37")
 
@@ -143,12 +153,18 @@ hatchery_data <- bind_rows(hatchery_data, total_artemia_data)
 glimpse(hatchery_data)
 ```
 
+    Rows: 1,087
+    Columns: 4
+    $ culture_age_days <dbl> 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…
+    $ date             <date> 2025-08-03, 2025-08-04, 2025-08-05, 2025-08-07, 2025…
+    $ feed_type        <chr> "feed_1", "feed_1", "feed_1", "feed_1", "feed_1", "fe…
+    $ value            <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+
 ## 3. Function Definitions
 
 Okay, here are the actual functions for the assignment.
 
-```{r define-functions}
-
+``` r
 #' Function 1: The Plotting One.
 #'
 #' @param data Long-format data frame. Needs 'culture_age_days', 'feed_type', 'value'.
@@ -273,7 +289,8 @@ Here are the examples to prove they work.
 ### Example 1: Plot Function (`plot_feeding_regimen`)
 
 #### Example 1.1: Plotting Rotifer Feed
-```{r plot-ex1}
+
+``` r
 # Plotting Rotifers.
 plot_feeding_regimen(
   data = hatchery_data,
@@ -283,8 +300,11 @@ plot_feeding_regimen(
 )
 ```
 
+![](week10hw_files/figure-commonmark/plot-ex1-1.png)
+
 #### Example 1.2: Plotting Total Artemia Feed
-```{r plot-ex2}
+
+``` r
 # Plotting the "Total Artemia" we made earlier.
 plot_feeding_regimen(
   data = hatchery_data,
@@ -294,8 +314,11 @@ plot_feeding_regimen(
 )
 ```
 
+![](week10hw_files/figure-commonmark/plot-ex2-1.png)
+
 #### Example 1.3: Plotting Microalgae
-```{r plot-ex3}
+
+``` r
 # Plotting Algae.
 plot_feeding_regimen(
   data = hatchery_data,
@@ -307,8 +330,11 @@ plot_feeding_regimen(
   scale_y_continuous(labels = scales::comma)
 ```
 
+![](week10hw_files/figure-commonmark/plot-ex3-1.png)
+
 #### Example 1.4: Plotting Dry Feed
-```{r plot-ex4}
+
+``` r
 # Plotting Dry Feed.
 plot_feeding_regimen(
   data = hatchery_data,
@@ -318,10 +344,13 @@ plot_feeding_regimen(
 )
 ```
 
+![](week10hw_files/figure-commonmark/plot-ex4-1.png)
+
 ### Example 2: Non-Plot Function (`summarize_run_parameters`)
 
 #### Example 2.1: Summarizing Physical Parameters
-```{r summary-ex1}
+
+``` r
 # Example 2.1: Physical stuff.
 physical_types <- c("feed_4", "feed_6", "feed_8")
 
@@ -338,8 +367,15 @@ knitr::kable(
 )
 ```
 
+| Parameter | Mean | Min | Max |
+|:----------|-----:|----:|----:|
+| pH        | 7.56 |   0 |  10 |
+
+Summary of Physical Parameters
+
 #### Example 2.2: Summarizing Feed Parameters
-```{r summary-ex2}
+
+``` r
 # Example 2.2: Feed stuff.
 feed_types_to_summarize <- c("feed_27", "feed_artemia_total", "feed_39")
 
@@ -356,6 +392,14 @@ knitr::kable(
 )
 ```
 
+| Parameter             |  Mean | Min |  Max |
+|:----------------------|------:|----:|-----:|
+| Rotifer Density       | 10.77 |   5 | 15.0 |
+| Dry Feed              |  0.27 |   0 |  0.3 |
+| Total Artemia Density |  0.13 |   0 |  0.2 |
+
+Summary of Feed Amounts Added
+
 ## 5. Conclusion
 
-And... done. The functions work, the plots plot?, the tables tabulate.
+And… done. The functions work, the plots plot?, the tables tabulate.
