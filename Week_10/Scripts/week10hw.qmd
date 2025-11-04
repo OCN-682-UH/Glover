@@ -1,0 +1,500 @@
+---
+title: "Week 10 Homework - Functions"
+author: "Kent Glover"
+format: 
+  html:
+    self-contained: true
+    toc: true
+    code-fold: true
+editor: visual
+---
+
+## 1. Introduction
+
+This document fulfills the assignment requirements by creating two custom R functions to analyze hatchery data. The data is sourced from the `run41_feed_long.csv` file, which is already in a tidy, long format.
+
+The two functions are:
+
+1.  `plot_feeding_regimen()`: A plotting function that visualizes the amount of different feed types added over the culture age (in days).
+2.  `summarize_run_parameters()`: A non-plotting function that calculates key summary statistics (mean, min, max) for specified data columns.
+
+This document demonstrates the definition of each function and provides two examples of each to show its flexibility.
+
+## 2. Setup and Data Loading
+
+First, we load the necessary libraries. We use `tidyverse` for data manipulation and plotting (`ggplot2`), `readr` for loading the CSV, `here` for easy file paths, and `knitr` for nice tables.
+
+```{r setup, message=FALSE, warning=FALSE}
+# Load required libraries
+library(tidyverse)
+library(readr)
+library(janitor) # Still useful for clean_names
+library(here)
+library(knitr)
+library(stringr) # <-- ADDED THIS LIBRARY for str_split()
+library(tidyr)   # <-- ADDED THIS LIBRARY for fill()
+library(scales)  # <-- ADDED THIS LIBRARY for comma_format()
+```
+
+### Helper Function for Parsing Feed
+
+This new chunk defines a function to handle the special "10+5" and "150k" text.
+This new function is "vectorized" using `sapply` to run on the entire `value`
+column at once.
+
+It follows this logic for each cell:
+1.  Check for "k" (e.g., "150k" -> 150 * 1000 = 150000)
+2.  If no "k", check for "+" (e.g., "10+5" -> 10 + 5 = 15)
+3.  If neither, just try to convert to a number (e.g., "5" -> 5, "AP" -> NA)
+
+```{r helper-function}
+# Define the core parsing logic for a single value
+parse_feed_value <- function(x) {
+  
+  # Handle NA or empty string first
+  if (is.na(x) || x == "") {
+    return(NA_real_)
+  }
+  
+  # **** THIS IS THE NEW ROBUST FIX ****
+  # My previous parsers (whitespace, comma) failed. This
+  # new logic is more robust. It strips everything that
+  # isn't a digit, decimal, 'k', or '+'. This will handle
+  # extra text like "cells/mL" or "150,000" with commas
+  # and spaces.
+  
+  # 1. Keep only the characters we care about (digits, ., +, k, K)
+  x_clean <- str_remove_all(x, "[^0-9\\.\\+kK]")
+  
+  # 2. Make it lowercase for robust "k" matching
+  x_lower <- tolower(x_clean)
+  
+  # Handle the case where the string was just "AP" or "cells/mL",
+  # which would now be an empty string "".
+  if (x_lower == "") {
+    return(NA_real_)
+  }
+
+  # 3. Check for "k" at the end of the new string
+  if (grepl("k$", x_lower)) {
+    # Remove "k", convert to numeric, and multiply by 1000
+    val_no_k <- str_remove(x_lower, "k$")
+    # Use suppressWarnings for cases like "k" which would be NA
+    suppressWarnings({
+      val_num <- as.numeric(val_no_k)
+      if (!is.na(val_num)) {
+        
+        # **** THIS IS THE FIX ****
+        # If the number is already large (e.g., from "150,000k"), 
+        # just return the number (150,000).
+        if (val_num > 1000) {
+          return(val_num)
+        } else {
+        # Otherwise, (e.g., from "150k"), multiply by 1000.
+          return(val_num * 1000)
+        }
+        
+      }
+    })
+    # If it was "k", it will fall through and return NA at the end.
+  }
+  
+  # 4. Check for "+" in the new string
+  if (grepl("\\+", x_lower)) { # Use the cleaned version
+    # Split by +, convert parts to numeric, and sum
+    parts <- unlist(str_split(x_lower, "\\+")) # Use cleaned
+    # Get the sum, return NA if all parts were non-numeric
+    val_sum <- sum(as.numeric(parts), na.rm = TRUE)
+    # Check if any part was actually numeric
+    if (any(!is.na(as.numeric(parts)))) {
+      return(val_sum)
+    }
+  }
+  
+  # 5. Otherwise, just try to convert the cleaned string to numeric
+  # This will correctly handle:
+  # - "150000" (from "150,000 cells/mL")
+  # - "5" (from "5")
+  # - "" (from "AP") which is handled above
+  suppressWarnings({
+    return(as.numeric(x_lower)) # Use the fully cleaned version
+  })
+}
+
+# Create a vectorized version of the function to apply to the whole column
+parse_feed_value_vec <- function(col) {
+  sapply(col, parse_feed_value)
+}
+```
+
+
+### Loading and Cleaning the Data
+
+Now, we update the `mutate` call in *this* chunk to use our new 
+`parse_feed_value_vec` function. This no longer needs the `feed_type` column.
+
+```{r load-data}
+# Define the file path to the long CSV file
+# This file MUST be in the same directory as your .qmd file (or subfolder)
+#
+# **** THIS IS THE FIX ****
+# The path was changed to point to the file in the root directory,
+# instead of a non-existent subfolder. This will allow R to find
+# the file and correctly read the algae data.
+file_path <- here("Week_10", "Data", "run41_feed_long.csv")
+
+# Load the raw data
+raw_data <- read_csv(file_path, show_col_types = FALSE)
+
+# Clean the data
+hatchery_data <- raw_data %>%
+  # Rename 'age' to match our functions
+  rename(culture_age_days = age) %>%
+  #
+  # **** THIS IS THE FIX ****
+  # We now use our new, "smarter" helper function that can
+  # parse "k" and "+" notations directly from the value column.
+  mutate(
+    value = parse_feed_value_vec(value), # <-- THIS LINE IS CHANGED
+    culture_age_days = as.numeric(culture_age_days)
+  )
+  #
+  # REMOVED: filter(!is.na(culture_age_days))
+  # This line was the root cause of the error.
+  # It was deleting all the Artemia data.
+  # We will now filter for NAs inside the plot function.
+  #
+
+# Show the structure of our cleaned data
+glimpse(hatchery_data)
+```
+
+### Data Processing: Create Total Artemia Feed
+
+This is a new chunk to create the "Total Artemia Density" as requested. We
+filter for all Artemia types, sum them by day, and then add this new
+summarized data back into our main data frame.
+
+```{r process-data}
+# 1. Define all the feed types that make up "Total Artemia"
+artemia_types <- c("feed_32", "feed_35", "feed_36", "feed_37")
+
+# 2. Filter, group by day, and sum the values
+total_artemia_data <- hatchery_data %>%
+  filter(feed_type %in% artemia_types) %>%
+  group_by(culture_age_days) %>%
+  # Sum all artemia values for that day, treating NAs as 0
+  summarise(value = sum(value, na.rm = TRUE)) %>%
+  # 3. Add the new feed_type identifier
+  mutate(feed_type = "feed_artemia_total") %>%
+  # 4. Ungroup and select columns to match hatchery_data
+  ungroup() %>%
+  select(culture_age_days, feed_type, value)
+
+# 5. Add these new rows back into the main data frame
+hatchery_data <- bind_rows(hatchery_data, total_artemia_data)
+
+# Show the new structure, which now includes "feed_artemia_total"
+glimpse(hatchery_data)
+```
+
+
+## 3. Function Definitions
+
+Here we define our two functions. They are now much simpler because they work directly with the long data format.
+
+```{r define-functions}
+
+#' Plot Feeding Regimen Over Time
+#'
+#' This function takes the cleaned, long-format hatchery data and a vector of
+#' feed types (e.g., "feed_27") to create a line plot of feed amounts
+#' versus culture age.
+#'
+#' @param data A data frame in long format (must have 'culture_age_days', 
+#'             'feed_type', and 'value' columns).
+#' @param feed_types_to_plot A character vector of feed_type names to plot 
+#'                           (e.g., c("feed_27", "feed_32")).
+#' @param plot_title A string for the plot's title.
+#' @param y_axis_label A string for the Y-axis label (optional).
+#'
+#' @return A ggplot object.
+plot_feeding_regimen <- function(data, 
+                               feed_types_to_plot, 
+                               plot_title, 
+                               y_axis_label = "Amount Added") { # <-- ADDED y_axis_label
+  
+  # This lookup vector makes the plot legend readable.
+  # These are based on the column numbers from the original Excel file.
+  feed_name_lookup <- c(
+    "feed_14" = "Algae Density",
+    "feed_21" = "Copepod Density",
+    "feed_27" = "Rotifer Density",
+    "feed_32" = "Artemia - Newly Hatched",     # <-- RENAMED
+    "feed_35" = "ArtemIA - Enriched (BGs AM)", # <-- ADDED
+    "feed_36" = "Artemia - Enriched (BGs PM)", # <-- ADDED
+    "feed_37" = "Artemia - Enriched (Density)",  # <-- ADDED
+    "feed_39" = "Dry Feed",
+    "feed_artemia_total" = "Total Artemia Density" # <-- ADDED
+  )
+  
+  # Filter data for only the feeds we want to plot
+  data_to_plot_original <- data %>%
+    filter(feed_type %in% feed_types_to_plot) %>%
+    # Use the lookup vector to create clean legend names
+    mutate(feed_name = recode(feed_type, !!!feed_name_lookup))
+    
+  #
+  # **** THIS IS THE FINAL, ROBUST FIX ****
+  # We must create the grid from clean vectors, *not* from the 
+  # data_to_plot_original data frame, which has NA ages.
+  
+  # 1. Get the full sequence of days from the *main* data, ignoring NAs.
+  #    This gives us a clean 0, 1, 2, ... 90 vector.
+  date_range <- tidyr::full_seq(data$culture_age_days, 1)
+  
+  # 2. Get the unique feed names we want to plot.
+  unique_feeds <- unique(data_to_plot_original$feed_name)
+  
+  # 3. Create the "perfect grid" using these two clean vectors.
+  data_grid <- tidyr::expand_grid(feed_name = unique_feeds, 
+                             culture_age_days = date_range) %>%
+    # Remove any NA days (e.g., if the entire data set had no days)
+    filter(!is.na(culture_age_days))
+    
+  # 4. Join the original, flawed data onto this perfect grid.
+  data_to_plot <- data_grid %>%
+    left_join(
+      data_to_plot_original, 
+      by = c("feed_name", "culture_age_days")
+    ) %>%
+    #
+    # **** THIS IS THE FIX ****
+    # 5. Group by feed_name so fill() doesn't "bleed" data
+    #    between different feed types. This is the crucial fix.
+    group_by(feed_name) %>%
+    #
+    # 6. Fill NAs with the last known value (Last Observation Carried Forward)
+    #    This turns spikes (150k on day 0) into plateaus (150k from day 0-29)
+    tidyr::fill(value, .direction = "down") %>%
+    #
+    # 7. Any remaining NAs (e.g., at the *start* before day 0) become 0.
+    mutate(value = replace_na(value, 0)) %>%
+    #
+    # 8. Ungroup to prevent issues later
+    ungroup()
+
+
+  # Create the plot
+  ggplot(data_to_plot, aes(x = culture_age_days, y = value, color = feed_name)) +
+    geom_line(linewidth = 1.2) +
+    geom_point(size = 2.5) +
+    labs(
+      title = plot_title,
+      x = "Culture Age (Days)",
+      y = y_axis_label # <-- UPDATED to use the new argument
+    ) +
+    theme_minimal(base_size = 14) +
+    scale_color_brewer(palette = "Set1", name = "Feed Type")
+}
+
+
+#' Summarize Run Parameters
+#'
+#' This function calculates summary statistics (mean, min, max) for any
+#' specified numeric parameter types (e.g., "feed_4" for Temp).
+#'
+#' @param data A data frame in long format (must have 'feed_type' and 'value').
+#' @param param_types_to_summarize A character vector of parameter types to 
+#'                                 summarize (e.g., c("feed_4", "feed_6")).
+#'
+#' @return A data frame with the summary statistics.
+summarize_run_parameters <- function(data, param_types_to_summarize) {
+  
+  # Lookup vector for readable parameter names
+  param_name_lookup <- c(
+    "feed_4" = "Temp (C)",
+    "feed_6" = "Salinity (ppt)",
+    "feed_8" = "pH",
+    "feed_14" = "Algae Density",
+    "feed_21" = "Copepod Density",
+    "feed_27" = "Rotifer Density",
+    "feed_32" = "Artemia - Newly Hatched",     # <-- RENAMED
+    "feed_35" = "Artemia - Enriched (BGs AM)", # <-- ADDED
+    "feed_36" = "Artemia - Enriched (BGs PM)", # <-- ADDED
+    "feed_37" = "Artemia - Enriched (Density)",  # <-- ADDED
+    "feed_39" = "Dry Feed",
+    "feed_artemia_total" = "Total Artemia Density" # <-- ADDED
+  )
+  
+  # 1. Filter for the parameters we want
+  param_summary <- data %>%
+    filter(feed_type %in% param_types_to_summarize) %>%
+    #
+    # FIX 3: Filter out NA values *inside* this function.
+    # We can't calculate a mean/min/max on NA values, so we
+    # remove them here. This prevents the summary table
+    # from showing Inf or NaN.
+    filter(!is.na(value)) %>%
+    # 2. Group by the parameter type
+    group_by(feed_type) %>%
+    # 3. Calculate summary stats
+    #
+    # **** THIS IS THE FINAL FIX ****
+    # We must use ifelse(n() > 0, ...) to handle empty groups.
+    # If we find no data (like for Rotifers), n() will be 0, and we 
+    # will return 0 instead of NaN or Inf.
+    summarise(
+      Mean = ifelse(n() > 0, mean(value, na.rm = TRUE), 0),
+      Min = ifelse(n() > 0, min(value, na.rm = TRUE), 0),
+      Max = ifelse(n() > 0, max(value, na.rm = TRUE), 0),
+      .groups = "drop" # Add .groups to avoid a summarize warning
+    ) %>%
+    # 4. Use the lookup to make names readable
+    mutate(Parameter = recode(feed_type, !!!param_name_lookup)) %>%
+    # 5. Select and order columns for a clean table
+    select(Parameter, Mean, Min, Max)
+  
+  # 3. Return the summary table
+  return(param_summary)
+}
+```
+
+## 4. Function Examples
+
+Here we demonstrate the flexibility of each function. Note that we are using the "feed\_XX" names, which correspond to the columns in the original file.
+
+### Example 1: Plot Function (`plot_feeding_regimen`)
+
+The original plots were overcrowded. Here, we split each major feed type into its own plot to make the Y-axis scales readable.
+
+#### Example 1.1: Plotting Rotifer Feed
+This example shows the feeding regimen for Rotifers (`feed_27`).
+
+```{r plot-ex1}
+# Define the feed types we want to plot
+rotifer_feed <- c("feed_27")
+
+# Call the function
+plot_feeding_regimen(
+  data = hatchery_data,
+  feed_types_to_plot = rotifer_feed,
+  plot_title = "Rotifer Feed Regimen",
+  y_axis_label = "Density (#/mL)"
+)
+```
+
+#### Example 1.2: Plotting Artemia Feed
+This example now plots the single `"feed_artemia_total"` line, which represents
+the sum of all Artemia stages for each day.
+
+```{r plot-ex2}
+# Define the new total feed type
+artemia_total <- c("feed_artemia_total")
+
+# Call the function again
+plot_feeding_regimen(
+  data = hatchery_data,
+  feed_types_to_plot = artemia_total,
+  plot_title = "Total Artemia Feed Regimen",
+  y_axis_label = "Density (#/mL)"
+)
+```
+
+#### Example 1.3: Plotting Microalgae Feed
+This example plots the Microalgae (`feed_14`). Note the Y-axis scale reflects the 1000x multiplier we applied during data loading.
+
+```{r plot-ex3}
+# Define the feed type
+#
+# **** THIS IS THE FIX ****
+# Reverting to 'feed_14' as the user has correctly
+# identified. My previous change to 'feed_15' was incorrect.
+# The helper-function is already built to parse
+# the "150k" text from this 'feed_14' column.
+algae_feed <- c("feed_14") # <-- CHANGED BACK FROM "feed_15"
+
+# Call the function
+plot_feeding_regimen(
+  data = hatchery_data,
+  feed_types_to_plot = algae_feed,
+  plot_title = "Microalgae Feed Regimen",
+  y_axis_label = "Density (cells/mL)"
+) + # <-- ADD THE '+' TO ADD A NEW GGPLOT LAYER
+
+  # **** THIS IS THE FIX ****
+  # This line tells ggplot to format the Y-axis
+  # labels with commas instead of scientific notation.
+  scale_y_continuous(labels = scales::comma)
+```
+
+#### Example 1.4: Plotting Dry Feed
+This example plots the Dry Feed (`feed_39`).
+
+```{r plot-ex4}
+# Define the feed type
+dry_feed <- c("feed_39")
+
+# Call the function
+plot_feeding_regimen(
+  data = hatchery_data,
+  feed_types_to_plot = dry_feed,
+  plot_title = "Dry Feed Regimen",
+  y_axis_label = "Grams per Tank"
+)
+```
+
+
+### Example 2: Non-Plot Function (`summarize_run_parameters`)
+
+This function no longer prints run duration, as that was tied to the `culture_age_days` column, but it cleanly summarizes any parameters you give it.
+
+#### Example 2.1: Summarizing Physical Parameters
+This example uses the function to get a summary of the key physical water parameters: Temperature (`feed_4`), Salinity (`feed_6`), and pH (`feed_8`).
+
+```{r summary-ex1}
+# Define the physical parameter columns
+physical_types <- c("feed_4", "feed_6", "feed_8")
+
+# Call the function
+summary1 <- summarize_run_parameters(
+  data = hatchery_data,
+  param_types_to_summarize = physical_types
+)
+
+# Print the results
+knitr::kable(
+  summary1, 
+  caption = "Summary of Physical Parameters",
+  digits = 2
+)
+```
+
+#### Example 2.2: Summarizing Feed Parameters
+This example shows flexibility by using the *same* function to summarize a
+different set of columns—this time, Rotifers, total Artemia, and Dry Feed.
+
+```{r summary-ex2}
+# Define the feed columns to summarize
+# We now use "feed_artemia_total" instead of the individual components
+feed_types_to_summarize <- c("feed_27", "feed_artemia_total", "feed_39")
+
+# Call the function
+summary2 <- summarize_run_parameters(
+  data = hatchery_data,
+  param_types_to_summarize = feed_types_to_summarize
+)
+
+# Print the results
+knitr::kable(
+  summary2, 
+  caption = "Summary of Feed Amounts Added",
+  digits = 2
+)
+```
+
+## 5. Conclusion
+
+This Quarto document successfully defines and demonstrates two flexible functions for analyzing hatchery data from the `run41_feed_long.csv` file. The `plot_feeding_regimen` function provides a clear visualization of feeding patterns, while the `summarize_run_parameters` function offers a robust way to get summary statistics. This new tidy data file made the entire process much simpler and more robust.
+
+
