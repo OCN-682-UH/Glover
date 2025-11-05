@@ -1,0 +1,12 @@
+name: Scripts
+title: Scripts
+username: thefishlg
+account: thefishlg
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15968634
+bundleId:
+url: https://thefishlg.shinyapps.io/Scripts/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
