@@ -2,11 +2,13 @@ This repository contains all of my scripts, assignments, and projects for MBIO 6
 
 ---
 
+## **[Potter's Angelfish Data Shiny App](https://thefishlg.shinyapps.io/Potterful)** 🐟
+
 ## Repository Contents 📂
 
 * **[Good/Bad Plot](https://github.com/OCN-682-UH/Glover/tree/main/GoodplotBadplot)**: My Good Plot Bad Plot files. hehe.
 * **[Week_02](https://github.com/OCN-682-UH/Glover/tree/main/Week_02)**: Week 2 data, scripts, and outputs.
-*  [Week_03](https://github.com/OCN-682-UH/Glover/tree/main/Week%20_03) Week 3 data, scripts, and outputs.
+*  **[Week_03](https://github.com/OCN-682-UH/Glover/tree/main/Week%20_03)** Week 3 data, scripts, and outputs.
 *  **[Week_04](https://github.com/OCN-682-UH/Glover/tree/main/Week_04)** Week 4 data, scripts, and outputs.
 *  **[Week_05](https://github.com/OCN-682-UH/Glover/tree/main/Week_05)** Week 5 data, scripts, and outputs.
 *  **[Week_06](https://github.com/OCN-682-UH/Glover/tree/main/Week_06)** Week 6 data, scripts, and outputs.
@@ -14,6 +16,8 @@ This repository contains all of my scripts, assignments, and projects for MBIO 6
 *  **[Week_08](https://github.com/OCN-682-UH/Glover/tree/main/Week_08)** Week 8 data, scripts, and outputs.
 *  **[Week_09](https://github.com/OCN-682-UH/Glover/tree/main/Week_09)** Week 9 data, scripts, and outputs.
 *  **[Week_10](https://github.com/OCN-682-UH/Glover/tree/main/Week_10)** Week 10 data, scripts, and outputs.
+*  **[Week_11](https://github.com/OCN-682-UH/Glover/tree/main/Week_11)** Week 11 data, scripts, and outputs.
+*  **[Week_12](https://github.com/OCN-682-UH/Glover/tree/main/Week_12)** Week 12 data, scripts, and outputs.
 
 ---
 
