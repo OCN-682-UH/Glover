@@ -34,7 +34,7 @@ We use the `tt_load` function to download the data for 2025-11-04. Based on the 
 # Load the Tidy Tuesday dataset for 2025-11-04
 tuesdata <- tidytuesdayR::tt_load('2025-11-04')
 
-# Access the data frames by their correct names
+#Access the data frames by their correct names
 flint_mdeq <- tuesdata$flint_mdeq
 flint_vt <- tuesdata$flint_vt
 
@@ -62,7 +62,7 @@ vt_tidy <- flint_vt %>%
 
 # Combine them into one long data frame
 combined_data <- bind_rows(mdeq_tidy, vt_tidy) %>%
-  # Remove NAs
+  #Remove NAs
   drop_na(lead) %>% 
   # Make data_source a factor
   mutate(data_source = as.factor(data_source))
@@ -76,7 +76,6 @@ glimpse(combined_data)
 Because the lead data has extreme outliers (a "long tail"), a standard boxplot is hard to read. A better "best practice" for this type of data is to show the boxplot on a **logarithmic scale** (`scale_y_log10()`). This makes the distributions comparable. We also add `geom_jitter` to show the density of individual points.
 
 ```{r plot-static, fig.width=10, fig.height=6}
-# --- Static Plot (Best Practices) ---
 
 # The 15 ppb EPA action level 
 epa_action_level <- 15
@@ -117,12 +116,12 @@ p_static <- ggplot(combined_data, aes(x = data_source, y = lead, fill = data_sou
   ) +
   
   theme_minimal(base_size = 14) +
-  theme(legend.position = "none") # Redundant, fill matches x-axis
+  theme(legend.position = "none")
 
 # Show the plot
 p_static
 
-# Save the plot
+#Save the plot
 ggsave(here("Week_11", "Outputs","flint_boxplot_comparison.png"), p_static, width = 10, height = 6)
 ```
 
@@ -144,7 +143,7 @@ For my new skill, I learned to use the **`{ggridges}`** package. I'm using `geom
 p_ridges <- ggplot(combined_data, 
        aes(x = lead, y = data_source, fill = data_source, height = after_stat(density))) +
   
-  # The new geom from the {ggridges} package [4, 9, 11, 12, 5]
+  # The new geom from the {ggridges} package
   geom_density_ridges(
     stat = "density",
     scale = 1.5, # Controls overlap
@@ -152,7 +151,7 @@ p_ridges <- ggplot(combined_data,
     rel_min_height = 0.01 # Trims the long tails
   ) +
   
-  # Add the EPA Action Level line
+  #Add the EPA Action Level line
   geom_vline(
     xintercept = epa_action_level,
     color = "red",
@@ -166,7 +165,7 @@ p_ridges <- ggplot(combined_data,
     labels = scales::comma_format(accuracy = 1)
   ) +
   
-  # Use the built-in {ggridges} theme [4, 12, 5]
+  # Use the built-in {ggridges} theme
   theme_ridges(font_size = 14) +
   
   labs(
@@ -177,7 +176,7 @@ p_ridges <- ggplot(combined_data,
   
   theme(legend.position = "none")
 
-# Show the plot
+#Show the plot
 p_ridges
 
 # Save the plot

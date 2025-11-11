@@ -43,7 +43,7 @@ tuesdata <- tidytuesdayR::tt_load('2025-11-04')
       2 of 2: "flint_vt.csv"
 
 ``` r
-# Access the data frames by their correct names
+#Access the data frames by their correct names
 flint_mdeq <- tuesdata$flint_mdeq
 flint_vt <- tuesdata$flint_vt
 
@@ -89,7 +89,7 @@ vt_tidy <- flint_vt %>%
 
 # Combine them into one long data frame
 combined_data <- bind_rows(mdeq_tidy, vt_tidy) %>%
-  # Remove NAs
+  #Remove NAs
   drop_na(lead) %>% 
   # Make data_source a factor
   mutate(data_source = as.factor(data_source))
@@ -112,8 +112,6 @@ This makes the distributions comparable. We also add `geom_jitter` to
 show the density of individual points.
 
 ``` r
-# --- Static Plot (Best Practices) ---
-
 # The 15 ppb EPA action level 
 epa_action_level <- 15
 
@@ -153,7 +151,7 @@ p_static <- ggplot(combined_data, aes(x = data_source, y = lead, fill = data_sou
   ) +
   
   theme_minimal(base_size = 14) +
-  theme(legend.position = "none") # Redundant, fill matches x-axis
+  theme(legend.position = "none")
 
 # Show the plot
 p_static
@@ -168,7 +166,7 @@ p_static
 ![](Week11HW_files/figure-commonmark/plot-static-1.png)
 
 ``` r
-# Save the plot
+#Save the plot
 ggsave(here("Week_11", "Outputs","flint_boxplot_comparison.png"), p_static, width = 10, height = 6)
 ```
 
@@ -212,7 +210,7 @@ excellent way to compare distributions.
 p_ridges <- ggplot(combined_data, 
        aes(x = lead, y = data_source, fill = data_source, height = after_stat(density))) +
   
-  # The new geom from the {ggridges} package [4, 9, 11, 12, 5]
+  # The new geom from the {ggridges} package
   geom_density_ridges(
     stat = "density",
     scale = 1.5, # Controls overlap
@@ -220,7 +218,7 @@ p_ridges <- ggplot(combined_data,
     rel_min_height = 0.01 # Trims the long tails
   ) +
   
-  # Add the EPA Action Level line
+  #Add the EPA Action Level line
   geom_vline(
     xintercept = epa_action_level,
     color = "red",
@@ -234,7 +232,7 @@ p_ridges <- ggplot(combined_data,
     labels = scales::comma_format(accuracy = 1)
   ) +
   
-  # Use the built-in {ggridges} theme [4, 12, 5]
+  # Use the built-in {ggridges} theme
   theme_ridges(font_size = 14) +
   
   labs(
@@ -245,7 +243,7 @@ p_ridges <- ggplot(combined_data,
   
   theme(legend.position = "none")
 
-# Show the plot
+#Show the plot
 p_ridges
 ```
 
