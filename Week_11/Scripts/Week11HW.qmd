@@ -186,4 +186,4 @@ ggsave(here("Week_11", "Outputs", "flint_ridgeline_comparison.png"), p_ridges, w
 
 ## 6. Conclusion
 
-This assignment is complete.
+I think this completed the assignment! WOOo
