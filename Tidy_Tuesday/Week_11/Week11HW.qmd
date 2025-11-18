@@ -1,16 +1,11 @@
 ---
 title: "Tidy Tuesday: Flint Water Analysis"
 author: "Kent Glover"
-format: 
-  html:
-    self-contained: true
-    toc: true
-    code-fold: true
+format: gfm
 editor: visual
 ---
 
 ## 1. Introduction
-
 
 This week's data is from the 2015 Flint, Michigan water crisis, and is provided in two separate files: one from the Michigan Department of Environment (MDEQ) and one from a Virginia Tech (VT) citizen science project.
 
@@ -28,7 +23,7 @@ library(here)
 
 ### 2.1. Load the Data
 
-We use the `tt_load` function to download the data for 2025-11-04. Based on the `readme`, this load object contains two data frames: `flint_mdeq` and `flint_vt`. 
+We use the `tt_load` function to download the data for 2025-11-04. Based on the `readme`, this load object contains two data frames: `flint_mdeq` and `flint_vt`.
 
 ```{r load-data}
 # Load the Tidy Tuesday dataset for 2025-11-04
@@ -131,7 +126,7 @@ ggsave(here("Week_11", "Outputs","flint_boxplot_comparison.png"), p_static, widt
 
 For the "new thing" requirement, I'm learning the `{ggridges}` package. The original idea of animating (`gganimate`) is not appropriate for this dataset, as there is no time variable to animate. A ridgeline plot is an excellent way to compare distributions.
 
-::: {.callout-note}
+::: callout-note
 ## My "One New Thing" This Week (1 Point)
 
 For my new skill, I learned to use the **`{ggridges}`** package. I'm using `geom_density_ridges()` to create a ridgeline plot. This is a very clean and effective way to visualize and compare the different *shapes* of the two distributions, especially when plotted on a log scale.
