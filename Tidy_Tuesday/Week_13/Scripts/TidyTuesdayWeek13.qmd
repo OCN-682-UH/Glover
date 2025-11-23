@@ -1,0 +1,123 @@
+---
+title: "Tidy Tuesday Week 13: Sherlock Holmes"
+author: "Kent Glover"
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+---
+
+## Intro
+
+For this week's Tidy Tuesday we are looking at the sherlock holmes text data.
+
+## Setup and Data Loading
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+
+#loading libs
+library(tidyverse)
+library(tidytext)
+library(here)
+library(ggwordcloud) #this is the new package i learned
+library(showtext)
+
+#setting theme
+theme_set(theme_minimal())
+
+#bring in data from github link
+holmes_raw <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-11-18/holmes.csv')
+
+
+#check
+head(holmes_raw)
+```
+
+## Cleaning Functions
+
+I'm writing a function to clean the text because the raw gutenberg text has mess chapter titles and weird spacing.
+
+```{r}
+#| label: functions
+
+#function to tidy up the text
+clean_holmes_text <- function(df) {
+  df %>%
+    #removing chapter headers because they aren't real text
+    filter(!str_detect(text, "^(CHAPTER|PART|Table of)")) %>%
+    #breaking it down into one word per row
+    unnest_tokens(word, text) %>%
+    #removing underscores that gutenberg uses for italics
+    mutate(word = str_remove_all(word, "[_']"))
+}
+
+#custom stop words
+#holmes and watson appear too much so i'm removing them
+holmes_stops <- tibble(word = c("holmes", "watson", "sherlock", "said", "man", "one"))
+```
+
+## Analysis
+
+I'm subsetting the data to just the top 100 words because otherwise the plot looks like a blob.
+
+```{r}
+#| label: processing
+
+#cleaning pipeline
+plot_data <- holmes_raw %>%
+  clean_holmes_text() %>%
+  #removing standard stop words
+  anti_join(stop_words, by = "word") %>%
+  #removing my custom stop words
+  anti_join(holmes_stops, by = "word") %>%
+  count(word, sort = TRUE) %>%
+  #only taking the top 100 words to keep it clean
+  slice_head(n = 100) %>%
+  #adding some random angles for the plot
+  mutate(angle = 45 * sample(-2:2, n(), replace = TRUE, prob = c(1, 1, 4, 1, 1)))
+
+```
+
+## Visualization (New Thing!)
+
+Here is the `ggwordcloud`. I learned that `geom_text_wordcloud_area` is better than the basic one because it scales the area of the word to the frequency, not just the height, makes it more accurate.
+
+```{r}
+#| label: viz
+#| fig-width: 8
+#| fig-height: 6
+
+# plotting
+final_plot <- ggplot(plot_data, aes(label = word, size = n, color = n, angle = angle)) +
+  #this is the new geom
+geom_text_wordcloud_area(rm_outside = TRUE) +
+scale_size_area(max_size = 24) +
+scale_color_viridis_c(option = "viridis", direction = -1) +
+  labs(
+    title = "Most Common Words in Sherlock Holmes",
+    subtitle = "Excluding names and stop words",
+    caption = "Tidy Tuesday Week 3"
+  ) +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "#fafafa", color = NA))
+
+final_plot
+```
+
+## Saving output
+
+Saved to the output folder like the assignment asked.
+
+```{r}
+#| label: save
+
+#saving to output folder
+ggsave(here("Tidy_Tuesday", "Week_13", "Outputs", "holmes_cloud.png"), plot = final_plot, width = 8, height = 6)
+```
+
+## Summary
+
+The words"night" and "door" are super common, which makes sense for mystery novels. `ggwordcloud` was actually pretty easy to use once I figured out the aesthetics mapping! Definitely using this again instead of a bar chart when there are too many categories.

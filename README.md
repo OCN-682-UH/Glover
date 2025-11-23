@@ -19,6 +19,7 @@ This repository contains all of my scripts, assignments, and projects for MBIO 6
 *  **[Week_10](https://github.com/OCN-682-UH/Glover/tree/main/Week_10)** Week 10 data, scripts, and outputs.
 *  **[Week_11](https://github.com/OCN-682-UH/Glover/tree/main/Week_11)** Week 11 data, scripts, and outputs.
 *  **[Week_12](https://github.com/OCN-682-UH/Glover/tree/main/Week_12)** Week 12 data, scripts, and outputs.
+*  **[Week_13](https://github.com/OCN-682-UH/Glover/tree/main/Week_13)** Week 13 data, scripts, and outputs.
 
 ---
 
