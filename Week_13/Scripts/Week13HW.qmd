@@ -1,7 +1,12 @@
 ---
 title: "Week 13 HW"
 author: "Kent Glover"
-format: gfm
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    self-contained: true
+    df-print: paged
 ---
 
 ## Introduction
