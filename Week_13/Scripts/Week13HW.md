@@ -89,7 +89,7 @@ function to the list of files. This method is more concise and less
 prone to indexing errors than a for loop.
 
 ``` r
-# define function to process one file
+#define function to process one file
 calc_pool_stats <- function(file) {
   read_csv(file, show_col_types = FALSE) %>% 
     # cleaning step
@@ -103,11 +103,11 @@ calc_pool_stats <- function(file) {
     )
 }
 
-# map the function over the file list
-# map_dfr automatically binds the rows
+#map the function over the file list
+ #map_dfr automatically binds the rows
 final_map <- map_dfr(files, calc_pool_stats)
 
-# print table
+#print table
 kable(final_map, caption = "Summary Stats (Calculated with Map)", digits = 2)
 ```
 
