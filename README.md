@@ -2,7 +2,7 @@ This repository contains all of my scripts, assignments, and projects for MBIO 6
 
 ---
 
-## **[Potter's Angelfish Data Shiny App](https://thefishlg.shinyapps.io/Potterful)** 🐟
+## **[Potter's Angelfish Data Shiny App!](https://thefishlg.shinyapps.io/Potterful)** 🐟
 
 ## Repository Contents 📂
 
