@@ -1,0 +1,132 @@
+---
+title: "Week 15 Tidy Tuesday: Sechselaeuten Snowman"
+author: "Kent Glover"
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    self-contained: true
+    df-print: paged
+---
+
+## Introduction
+
+This week's TidyTuesday explores the "Sechselaeuten" festival in Zurich, where an exploding snowman called the *Böõgg* predicts the summer weather. The legend says: **"The faster the head explodes, the nicer the summer will be."**
+
+I will test this folk science by comparing the snowman's **burn duration** against the **average summer temperature**.
+
+## The "New Thing" I Learned
+
+For this week, I learned how to use the **`ggtext`** package. It allows you to use Markdown and HTML directly inside ggplot titles, subtitles, and axis labels.
+ instead of using a standard legend, I used `element_markdown()` to color-code the words in the title itself, making the chart cleaner and more magazine-style.
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+
+# Load libraries
+library(tidyverse)
+library(here)
+library(knitr)
+library(ggtext) # The new package for awesome text formatting
+
+# Set path to data (assumes file is downloaded locally as per instructions)
+# If not available locally, it will read from the URL.
+data_path <- here("Tidy_Tuesday", "Week_48", "Data", "sechselaeuten.csv")
+data_url <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-12-02/sechselaeuten.csv"
+
+# Create output directory if it doesn't exist
+output_dir <- here("Tidy_Tuesday", "Week_48", "Outputs")
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+```
+
+## Data Loading and Wrangling
+
+I will load the data and create a cleaner labelling column for the visualization.
+
+```{r}
+#| label: load-data
+#| message: false
+
+# Try loading locally, otherwise download
+if (file.exists(data_path)) {
+  sechselaeuten <- read_csv(data_path)
+} else {
+  sechselaeuten <- read_csv(data_url)
+}
+
+# Wrangle data
+# We want to highlight years where the summer was a "Record" (>19°C)
+# and see if they correspond to short burn durations.
+plot_data <- sechselaeuten %>%
+  filter(!is.na(duration), !is.na(tre200m0)) %>% 
+  mutate(
+    # Create a label for the legend/color mapping
+    summer_type = if_else(record, "Record Hot Summer (>19°C)", "Normal Summer"),
+    # Convert duration to numeric just in case
+    duration = as.numeric(duration)
+  )
+
+head(plot_data)
+```
+
+## Visualization
+
+Here I use `geom_smooth` to check the trend and `ggtext` to style the title. The goal is to see if a negative correlation exists (Short Time = High Temp).
+
+```{r}
+#| label: plot-snowman
+#| fig-width: 10
+#| fig-height: 6
+#| fig-cap: "Analysis of the Böõgg predictions"
+
+# Define colors for the HTML title
+color_hot <- "#FF4500"   # OrangeRed
+color_norm <- "#4682B4"  # SteelBlue
+
+# Create the plot
+p <- ggplot(plot_data, aes(x = duration, y = tre200m0)) +
+  # Add a linear trend line to test the theory
+  geom_smooth(method = "lm", color = "grey50", se = TRUE, alpha = 0.2) +
+  
+  # Scatter plot points
+  geom_point(aes(color = summer_type), size = 3, alpha = 0.8) +
+  
+  # Manual colors for points
+  scale_color_manual(values = c("Record Hot Summer (>19°C)" = color_hot, 
+                                "Normal Summer" = color_norm)) +
+  
+  # Custom Labels with HTML for ggtext
+  labs(
+    x = "Burn Duration (minutes)",
+    y = "Average Summer Temperature (°C)",
+    title = glue::glue("Does the **Exploding Snowman** Predict a <span style='color:{color_hot}'>**Hot Summer**</span>?"),
+    subtitle = "The folk legend says a <b>faster burn</b> predicts a warmer summer.<br>
+                However, the flat trend line suggests the <span style='color:#E69F00'>**Böõgg**</span> might just be guessing.",
+    caption = "Data Source: TidyTuesday (2025-12-02)"
+  ) +
+  
+  # Theme adjustments
+  theme_minimal(base_size = 14) +
+  theme(
+    # ENABLE MARKDOWN FOR TITLES (The "New Thing")
+    plot.title = element_markdown(size = 20, face = "bold"),
+    plot.subtitle = element_markdown(size = 12, lineheight = 1.2),
+    
+    # Remove standard legend since the title explains it
+    legend.position = "none",
+    
+    # Grid tweaks
+    panel.grid.minor = element_blank()
+  )
+
+# Display the plot
+p
+
+# Save the plot to the Outputs folder
+ggsave(here("Tidy_Tuesday", "Week_48", "Outputs", "sechselaeuten_plot.png"), 
+       plot = p, width = 10, height = 6, bg = "white")
+```
