@@ -31,12 +31,11 @@ library(here)
 library(knitr)
 library(ggtext) # The new package for awesome text formatting
 
-# Set path to data (assumes file is downloaded locally as per instructions)
-# If not available locally, it will read from the URL.
+#set path to data
 data_path <- here("Tidy_Tuesday", "Week_48", "Data", "sechselaeuten.csv")
 data_url <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-12-02/sechselaeuten.csv"
 
-# Create output directory if it doesn't exist
+#create output directory if it doesn't exist
 output_dir <- here("Tidy_Tuesday", "Week_48", "Outputs")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
@@ -59,14 +58,13 @@ if (file.exists(data_path)) {
 }
 
 # Wrangle data
-# We want to highlight years where the summer was a "Record" (>19°C)
-# and see if they correspond to short burn durations.
+#We want to highlight years where the summer was a "Record" (>19°C) and see if they correspond to short burn durations.
 plot_data <- sechselaeuten %>%
   filter(!is.na(duration), !is.na(tre200m0)) %>% 
   mutate(
-    # Create a label for the legend/color mapping
+    #Create a label for the legend/color mapping
     summer_type = if_else(record, "Record Hot Summer (>19°C)", "Normal Summer"),
-    # Convert duration to numeric just in case
+    #Convert duration to numeric just in case
     duration = as.numeric(duration)
   )
 
@@ -84,10 +82,10 @@ Here I use `geom_smooth` to check the trend and `ggtext` to style the title. The
 #| fig-cap: "Analysis of the Böõgg predictions"
 
 # Define colors for the HTML title
-color_hot <- "#FF4500"   # OrangeRed
-color_norm <- "#4682B4"  # SteelBlue
+color_hot <- "#FF4500"
+color_norm <- "#4682B4"
 
-# Create the plot
+#create the plot
 p <- ggplot(plot_data, aes(x = duration, y = tre200m0)) +
   # Add a linear trend line to test the theory
   geom_smooth(method = "lm", color = "grey50", se = TRUE, alpha = 0.2) +
@@ -112,11 +110,11 @@ p <- ggplot(plot_data, aes(x = duration, y = tre200m0)) +
   # Theme adjustments
   theme_minimal(base_size = 14) +
   theme(
-    # ENABLE MARKDOWN FOR TITLES (The "New Thing")
+    #ENABLE MARKDOWN FOR TITLES (The "New Thing")
     plot.title = element_markdown(size = 20, face = "bold"),
     plot.subtitle = element_markdown(size = 12, lineheight = 1.2),
     
-    # Remove standard legend since the title explains it
+    #remove standard legend since the title explains it
     legend.position = "none",
     
     # Grid tweaks
